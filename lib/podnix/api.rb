@@ -17,15 +17,14 @@ require "podnix/api/errors"
 require "podnix/api/version"
 require "podnix/api/images"
 require "podnix/api/servers"
-require "podnix/core/config"
 require "podnix/core/stuff"
 require "podnix/core/text"
 require "podnix/core/json_compat"
 require "podnix/core/error"
 require "podnix/core/images"
 require "podnix/core/images_collection"
-require "podnix/core/servers"
-require "podnix/core/servers_collection"
+require "podnix/core/server"
+require "podnix/core/server_collection"
 
 
 #we may nuke logs out of the api
@@ -75,8 +74,8 @@ module Podnix
     def initialize(options={})
       @options = OPTIONS.merge(options)
       @api_key = @options.delete(:api_key) || ENV['PODNIX_API_KEY']
-      @email = @options.delete(:email)
-      raise ArgumentError, "You must specify [:email, :api_key]" if @email.nil? || @api_key.nil?
+      #@email = @options.delete(:email)
+      raise ArgumentError, "You must specify [:email, :api_key]" if @api_key.nil?
     end
 
     def request(params,&block)
@@ -152,12 +151,11 @@ module Podnix
 
     #Make a lazy connection.
     def connection
-      @options[:path] =API_VERSION1+ @options[:path]
-      encoded_api_header = encode_header(@options)
-      @options[:headers] = HEADERS.merge({
-        'X-Podnix-HMAC' => encoded_api_header[:hmac],
-        'X-Podnix-Date' => encoded_api_header[:date],
-      }).merge(@options[:headers])
+    
+    puts "TEST API KEY ===========================> #{ENV['PODNIX_API_KEY']}"
+      @options[:path] =@options[:path]+'?key='+"#{ENV['PODNIX_API_KEY']}"
+      encoded_api_header = @options
+      @options[:headers] = HEADERS.merge(@options[:headers])
 
       #SSL certificate file paths
       #If ssl_ca_path and file specified shows error
@@ -195,21 +193,6 @@ module Podnix
     # :hmac
     # :date
     # (Refer https://Github.com/indykish/megamplay.git/test/AuthenticateSpec.scala)
-    def encode_header(cmd_parms)
-      header_params ={}
-      body_digest = OpenSSL::Digest::MD5.digest(cmd_parms[:body])
-      body_base64 = Base64.encode64(body_digest)
-
-      current_date = Time.now.strftime("%Y-%m-%d %H:%M")
-
-      data="#{current_date}"+"\n"+"#{cmd_parms[:path]}"+"\n"+"#{body_base64}"
-
-      digest  = OpenSSL::Digest::Digest.new('sha1')
-      movingFactor = data.rstrip!
-      hash = OpenSSL::HMAC.hexdigest(digest, @api_key, movingFactor)
-      final_hmac = @email+':' + hash
-      header_params = { :hmac => final_hmac, :date => current_date}
-    end
   end
 
 end

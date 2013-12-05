@@ -3,7 +3,7 @@ module Podnix
 
     # GET /servers
     def get_servers
-      @options = {:path => '/servers',:body => ""}.merge(@options)
+      @options = {:path => '/servers/list',:body => ""}.merge(@options)
 
       request(
         :expects  => 200,
