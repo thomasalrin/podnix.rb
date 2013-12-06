@@ -17,6 +17,7 @@ end
 require "podnix/api/errors"
 require "podnix/api/version"
 require "podnix/api/images"
+require "podnix/api/models"
 require "podnix/api/servers"
 require "podnix/core/stuff"
 require "podnix/core/text"
@@ -46,9 +47,14 @@ module Podnix
       'X-Ruby-Version' => RUBY_VERSION,
       'X-Ruby-Platform' => RUBY_PLATFORM
     }
+    
+    QUERY = {
+    :key => ENV['PODNIX_API_KEY']
+    }
 
     OPTIONS = {
       :headers => {},
+      :query => {},
       :host => 'api.podnix.com',
       :nonblock => false,
       :scheme => 'https'
@@ -72,7 +78,7 @@ module Podnix
     # be  merged into a class variable @options
     # 3. Upon merge of the options, the api_key, email as available in the @options is deleted.
     def initialize(options={})
-      @options = OPTIONS.merge(options)
+       @options = OPTIONS.merge(options)
       @api_key = @options.delete(:api_key) || ENV['PODNIX_API_KEY']
       #@email = @options.delete(:email)
       raise ArgumentError, "You must specify [:email, :api_key]" if @api_key.nil?
@@ -157,9 +163,8 @@ module Podnix
     #Make a lazy connection.
     def connection
 
-      puts "TEST API KEY ===========================> #{ENV['PODNIX_API_KEY']}"
-      @options[:path] =@options[:path]+'?key='+"#{ENV['PODNIX_API_KEY']}"
-      encoded_api_header = @options
+      #@options[:path]=@options[:path]+'&key='+"#{ENV['PODNIX_API_KEY']}"
+      @options[:query] = QUERY.merge(@options[:query])
       @options[:headers] = HEADERS.merge(@options[:headers])
 
       #SSL certificate file paths
@@ -174,7 +179,6 @@ module Podnix
         text.warn("Certificate file does not exist. SSL_VERIFY_PEER set as false")
         Excon.defaults[:ssl_verify_peer] = false
       #elsif !File.readable_real?(File.expand_path(File.join(File.dirname(__FILE__), "..", "certs", "test.pem")))
-      #	puts "==================> Test CER 2===============>"
       #	text.warn("Certificate file is readable. SSL_VERIFY_PEER set as false")
       #	Excon.defaults[:ssl_verify_peer] = false
       else
@@ -183,7 +187,8 @@ module Podnix
       end
 
       text.info("HTTP Request Data:")
-      text.msg("> HTTP #{@options[:scheme]}://#{@options[:host]}")
+      text.msg("> HTTP #{@options[:scheme]}://#{@options[:host]}/#{@options[:query]}")
+
       @options.each do |key, value|
         text.msg("> #{key}: #{value}")
       end
