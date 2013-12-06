@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'excon'
   s.add_runtime_dependency 'highline'
   s.add_runtime_dependency 'yajl-ruby'
+  s.add_runtime_dependency 'multi_json'
   s.add_runtime_dependency 'mixlib-config'
   s.add_runtime_dependency 'mixlib-log'
   s.add_development_dependency 'minitest'

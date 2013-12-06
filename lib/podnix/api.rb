@@ -4,6 +4,7 @@ require "excon"
 require "uri"
 require "zlib"
 require 'openssl'
+require 'multi_json'
 
 # open it up when needed. This will be needed when a new customer onboarded via pug.
 require "securerandom"
@@ -25,7 +26,6 @@ require "podnix/core/images"
 require "podnix/core/images_collection"
 require "podnix/core/server"
 require "podnix/core/server_collection"
-
 
 #we may nuke logs out of the api
 #require "megam/api/logs"
@@ -102,7 +102,12 @@ module Podnix
         reerror = klass.new(error.message, error.response)
         reerror.set_backtrace(error.backtrace)
         text.msg "#{text.color("#{reerror.response.body}", :white)}"
-        reerror.response.body = Podnix::JSONCompat.from_json(reerror.response.body.chomp)
+
+        begin
+          response.body = MultiJson.load(reerror.response.body.chomp)
+        rescue
+        end
+
         text.msg("#{text.color("RESPONSE ERR: Ruby Object", :magenta, :bold)}")
         text.msg "#{text.color("#{reerror.response.body}", :white, :bold)}"
         raise(reerror)
@@ -122,11 +127,13 @@ module Podnix
           response.body = Zlib::GzipReader.new(StringIO.new(response.body)).read
         end
         text.msg("#{text.color("RESPONSE: HTTP Body(JSON)", :magenta, :bold)}")
-
         text.msg "#{text.color("#{response.body}", :white)}"
 
         begin
-          response.body = Podnix::JSONCompat.from_json(response.body.chomp)
+          begin
+            response.body = MultiJson.load(response.body.chomp)
+          rescue
+          end
           text.msg("#{text.color("RESPONSE: Ruby Object", :magenta, :bold)}")
 
           text.msg "#{text.color("#{response.body}", :white, :bold)}"
@@ -140,8 +147,6 @@ module Podnix
         end
       end
       text.msg "#{text.color("END(#{(Time.now - start).to_s}s)", :blue, :bold)}"
-      #  text.msg "#{text.color("END(#{(Podnix::Stuff.time_ago(start))})", :blue, :bold)}"
-
       # reset (non-persistent) connection
       @connection.reset
       response
@@ -151,8 +156,8 @@ module Podnix
 
     #Make a lazy connection.
     def connection
-    
-    puts "TEST API KEY ===========================> #{ENV['PODNIX_API_KEY']}"
+
+      puts "TEST API KEY ===========================> #{ENV['PODNIX_API_KEY']}"
       @options[:path] =@options[:path]+'?key='+"#{ENV['PODNIX_API_KEY']}"
       encoded_api_header = @options
       @options[:headers] = HEADERS.merge(@options[:headers])
@@ -186,13 +191,13 @@ module Podnix
       @connection = Excon.new("#{@options[:scheme]}://#{@options[:host]}",@options)
     end
 
-    ## encode header as per rules.
-    # The input hash will have
-    # :api_key, :email, :body, :path
-    # The output will have
-    # :hmac
-    # :date
-    # (Refer https://Github.com/indykish/megamplay.git/test/AuthenticateSpec.scala)
+  ## encode header as per rules.
+  # The input hash will have
+  # :api_key, :email, :body, :path
+  # The output will have
+  # :hmac
+  # :date
+  # (Refer https://Github.com/indykish/megamplay.git/test/AuthenticateSpec.scala)
   end
 
 end
