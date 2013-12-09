@@ -49,7 +49,6 @@ module Podnix
     }
     
     QUERY = {
-    :key => ENV['PODNIX_API_KEY']
     }
 
     OPTIONS = {
@@ -79,9 +78,9 @@ module Podnix
     # 3. Upon merge of the options, the api_key, email as available in the @options is deleted.
     def initialize(options={})
        @options = OPTIONS.merge(options)
-      @api_key = @options.delete(:api_key) || ENV['PODNIX_API_KEY']
-      #@email = @options.delete(:email)
-      raise ArgumentError, "You must specify [:email, :api_key]" if @api_key.nil?
+       @key = options[:key]
+         @options[:query] = QUERY.merge(options)
+      raise ArgumentError, "You must specify podnix_api_key in knife.rb or ENV['PODNIX_API_KEY']" if @key.empty? && !ENV['PODNIX_API_KEY']
     end
 
     def request(params,&block)
@@ -163,8 +162,10 @@ module Podnix
     #Make a lazy connection.
     def connection
 
-      #@options[:path]=@options[:path]+'&key='+"#{ENV['PODNIX_API_KEY']}"
-      @options[:query] = QUERY.merge(@options[:query])
+if ENV['PODNIX_API_KEY'] && @options[:query][:key].empty?
+	QUERY[:key]="#{ENV['PODNIX_API_KEY']}"
+      @options[:query] = @options[:query].merge(QUERY)
+end
       @options[:headers] = HEADERS.merge(@options[:headers])
 
       #SSL certificate file paths
