@@ -9,6 +9,13 @@ For more about the Podnix API see <http://api.podnix.com>.
 
 We use Podnix to launch instances. If you need a [Platform as Service:](https://www.megam.co)
 
+Installation
+------------
+    gem install podnix
+    
+    In Gemfile
+    
+       gem "podnix"
 Usage
 -----
 
@@ -16,7 +23,7 @@ Start by creating a connection to Podnix with your credentials:
 
     require 'podnix'
 
-    podnix = Podnix::API.new(:headers => {:api_key => API_KEY})
+    podnix = Podnix::API.new({:key => "PODNIX_API_KEY"})
 
 Now you can make requests to the api.
 
@@ -33,9 +40,13 @@ For additional details about any of the commands, see the [API docs](http://api.
 
 ### Servers
 
-    podnix.get_servers                           # get a list of your nodes
-    podnix.create(:name => POGO)                 # creates a server in podnix(www.podnix.com) cloud named "POGO"
-    podnix.delete_server(POGO)                   # deletes a server named POGO
+    podnix.get_servers                           # get the list of all  your nodes
+    podnix.get_server({:id => "123"})            # get details of a particular node
+    podnix.create({:name => "POGO", :model => "1", :image => "37", :password => "Secret123", :ssd => "1", :storage => 10})                 
+    # creates a server in podnix(www.podnix.com) cloud named "POGO". Password must contain at least 9 chars and include a lower case char, an upper case char and a number.
+    podnix.start_server({:id => '123'})           #Start a node
+    podnix.stop_server({:id => '123'})           #Stop a node
+    podnix.delete_server({:id => '123'})                   # deletes a server 
 
 
 We are glad to help if you have questions, or request for new features.
