@@ -13,8 +13,8 @@ Installation
 ------------
     gem install podnix
     
-    In Gemfile
-    
+For Gemfile
+
        gem "podnix"
 Usage
 -----
@@ -36,27 +36,34 @@ For additional details about any of the commands, see the [API docs](http://api.
 
 ### Images
 
-* Get the list of all images
+Get the list of all images
+
     podnix.get_images
 
 ### Servers
 
-* Get the list of all  your nodes
+Get the list of all  your nodes
+
     podnix.get_servers
 
-* Get details of a particular node
+Get details of a particular node
+
     podnix.get_server({:id => "123"})
 
-* Creates a server in podnix(www.podnix.com) cloud named "POGO". Password must contain at least 9 chars and include a lower case char, an upper case char and a number.
+Creates a server in podnix(www.podnix.com) cloud named "POGO". Password must contain at least 9 chars and include a lower case char, an upper case char and a number.
+
     podnix.create({:name => "POGO", :model => "1", :image => "37", :password => "Secret123", :ssd => "1", :storage => 10})
 
-* Start a node
+Start a node
+
     podnix.start_server({:id => '123'})
 
-* Stop a node
+Stop a node
+
     podnix.stop_server({:id => '123'})
 
-* Delete a node
+Delete a node
+
     podnix.delete_server({:id => '123'})
 
 
