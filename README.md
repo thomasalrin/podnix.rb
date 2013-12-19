@@ -1,13 +1,13 @@
 Podnix Ruby Client (Work In Progress)
 ==================
 
-The Podnix Ruby Client is used to interact with the Podnix API from Ruby.
+The Podnix Ruby Client is used to interact with the podnix API from Ruby.
 
 For more about the Podnix API see <http://api.podnix.com>.
 
 [![Build Status](https://travis-ci.org/indykish/podnix.png)](https://travis-ci.org/indykish/podnix)
 
-We use Podnix to launch instances. If you need a [Platform as Service:](https://www.megam.co)
+We use podnix to launch instances. If you need a [Platform as Service:](https://www.megam.co)
 
 Installation
 ------------
@@ -19,7 +19,7 @@ For Gemfile
 Usage
 -----
 
-Start by creating a connection to Podnix with your credentials:
+Start by creating a connection to podnix with your credentials:
 
     require 'podnix'
 
