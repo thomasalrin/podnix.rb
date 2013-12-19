@@ -36,17 +36,28 @@ For additional details about any of the commands, see the [API docs](http://api.
 
 ### Images
 
-    podnix.get_images                                  # get a list of your images
+* Get the list of all images
+    podnix.get_images
 
 ### Servers
 
-    podnix.get_servers                           # get the list of all  your nodes
-    podnix.get_server({:id => "123"})            # get details of a particular node
-    podnix.create({:name => "POGO", :model => "1", :image => "37", :password => "Secret123", :ssd => "1", :storage => 10})                 
-    # creates a server in podnix(www.podnix.com) cloud named "POGO". Password must contain at least 9 chars and include a lower case char, an upper case char and a number.
-    podnix.start_server({:id => '123'})           #Start a node
-    podnix.stop_server({:id => '123'})           #Stop a node
-    podnix.delete_server({:id => '123'})                   # deletes a server 
+* Get the list of all  your nodes
+    podnix.get_servers
+
+* Get details of a particular node
+    podnix.get_server({:id => "123"})
+
+* Creates a server in podnix(www.podnix.com) cloud named "POGO". Password must contain at least 9 chars and include a lower case char, an upper case char and a number.
+    podnix.create({:name => "POGO", :model => "1", :image => "37", :password => "Secret123", :ssd => "1", :storage => 10})
+
+* Start a node
+    podnix.start_server({:id => '123'})
+
+* Stop a node
+    podnix.stop_server({:id => '123'})
+
+* Delete a node
+    podnix.delete_server({:id => '123'})
 
 
 We are glad to help if you have questions, or request for new features.
