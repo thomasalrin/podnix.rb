@@ -15,7 +15,7 @@ Installation
     
 For Gemfile
 
-       gem "podnix"
+    gem "podnix"
 Usage
 -----
 
